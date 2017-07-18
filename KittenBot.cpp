@@ -1,6 +1,7 @@
 #include"KittenBot.h"
 #include "AccelStepper.h"
 #include "MultiStepper.h"
+#include "Adafruit_NeoPixel.h"
 
 #define M1_A 5
 #define M1_B 6
@@ -14,6 +15,7 @@
 AccelStepper stpA(AccelStepper::FULL4WIRE, 5, 9, 6, 10);
 AccelStepper stpB(AccelStepper::FULL4WIRE, 7, 12, 8, 13);
 MultiStepper steppers;
+Adafruit_NeoPixel rgbled(16);
 
 KittenBot::KittenBot()
 {
@@ -27,6 +29,7 @@ KittenBot::KittenBot()
 	stpB.setAcceleration(200.0);
 	steppers.addStepper(stpA);
 	steppers.addStepper(stpB);
+	rgbled.begin();
 	stepMoving = false;
 	ppm = 14124;
 	baseWidth = 0.122;
@@ -43,6 +46,18 @@ void KittenBot::stopAll()
 	analogWrite(6,0);
 	analogWrite(9,0);
 	analogWrite(10,0);
+}
+
+void KittenBot::rgbShow(int pin, int pix, int r, int g, int b){
+	rgbled.setPin(pin);
+	if(pix==0){
+		for(int i=0;i<16;i++){
+		  rgbled.setPixelColor(i, r, g, b);
+		}
+	}else{
+		rgbled.setPixelColor(pix-1, r, g, b);  
+	}
+	rgbled.show();	
 }
 
 void KittenBot::runDCMotor(int idx, int spd){

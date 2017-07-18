@@ -6,7 +6,6 @@
 #include "LedControl.h"
 #include "ServoTimer2.h"
 #include "AccelStepper.h"
-#include "Adafruit_NeoPixel.h"
 #include "KittenBot.h"
 #include "Timer.h"
 
@@ -15,7 +14,6 @@
 
 ServoTimer2 servo[11];
 unsigned char servoPinMap[10]  ={4,7,8,11,12,13,A0,A1,A2,A3};
-Adafruit_NeoPixel rgbled(16);
 IRrecv irrecv;
 decode_results results;
 LiquidCrystal_I2C lcd(0x3f, 16, 2);
@@ -259,15 +257,7 @@ void doRgb(char * cmd) {
   int pin, pix, r, g, b;
 
   parsePinVal(cmd, &pin, &pix, &r, &g, &b);
-  rgbled.setPin(pin);
-  if(pix==0){
-    for(int i=0;i<16;i++){
-      rgbled.setPixelColor(i, r, g, b);
-    }
-  }else{
-    rgbled.setPixelColor(pix-1, r, g, b);  
-  }
-  rgbled.show();
+  kb.rgbShow(pin,pix,r,g,b);
 }
 
 void doIRAttach(char * cmd) {
@@ -561,7 +551,6 @@ void setup() {
 
   resetQueryList();
   echoVersion();
-  rgbled.begin();
   tm1637.setBrightness(0x0f);
   lc.shutdown(0, false);
   lc.setIntensity(0, 8);

@@ -23,6 +23,7 @@ class KittenBot
 		void motorStop(void);
 		void runDCMotor(int idx, int spd);
 		void stopAll(void);
+		void rgbShow(int pin, int pix, int r, int g, int b);
 		
 		void stepRun(int pos1, int pos2);
 		void stepRun(int pos1, int spd1, int pos2, int spd2);
