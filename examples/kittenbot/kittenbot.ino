@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.0\r\n"
+#define FIRMWARE "Kittenbot V2.01\r\n"
 
 
 ServoTimer2 servo[11];
@@ -289,6 +289,7 @@ void doDcSpeed(char *cmd)
 {
   int index = 0, spd = 0;
   parsePinVal(cmd,&index,&spd);
+
   kb.motorRunByIndex(index, spd);
 }
 

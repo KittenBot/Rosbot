@@ -11,6 +11,7 @@ class KittenBot
 		unsigned long timecount = 0;
 		int counter = 0;
 	public:
+		bool M3Enabled,M4Enabled;
 		float ppm;
 		float baseWidth;
 		KittenBot();

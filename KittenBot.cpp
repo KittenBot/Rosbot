@@ -31,6 +31,8 @@ KittenBot::KittenBot()
 	steppers.addStepper(stpB);
 	rgbled.begin();
 	stepMoving = false;
+	M3Enabled = false;
+	M4Enabled = false;
 	ppm = 14124;
 	baseWidth = 0.122;
 }
@@ -103,13 +105,17 @@ void KittenBot::loop()
 		  digitalWrite(M2_A, 0);
 		  digitalWrite(M2_B, 0);
 		}
-		if (counter == abs(spdM[2])) {
-		  digitalWrite(M3_A, 0);
-		  digitalWrite(M3_B, 0);
+		if(M3Enabled){
+			if (counter == abs(spdM[2])) {
+			  digitalWrite(M3_A, 0);
+			  digitalWrite(M3_B, 0);
+			}
 		}
-		if (counter == abs(spdM[3])) {
-		  digitalWrite(M4_A, 0);
-		  digitalWrite(M4_B, 0);
+		if(M4Enabled){
+			if (counter == abs(spdM[3])) {
+			  digitalWrite(M4_A, 0);
+			  digitalWrite(M4_B, 0);
+			}
 		}
 		counter++;
 		if (counter >= 255) {
@@ -117,10 +123,14 @@ void KittenBot::loop()
 		  digitalWrite(M1_B, 0);
 		  digitalWrite(M2_A, 0);
 		  digitalWrite(M2_B, 0);
-		  digitalWrite(M3_A, 0);
-		  digitalWrite(M3_B, 0);
-		  digitalWrite(M4_A, 0);
-		  digitalWrite(M4_B, 0);
+		  if(M3Enabled){
+			digitalWrite(M3_A, 0);
+			digitalWrite(M3_B, 0);
+		  }
+		  if(M4Enabled){
+			digitalWrite(M4_A, 0);
+			digitalWrite(M4_B, 0);
+		  }
 		  counter = 0;
 		  if (spdM[0] > 0) {
 			digitalWrite(M1_A, 1);
@@ -132,15 +142,19 @@ void KittenBot::loop()
 		  } else if (spdM[1] < 0) {
 			digitalWrite(M2_B, 1);
 		  }
-		  if (spdM[2] > 0) {
-			digitalWrite(M3_A, 1);
-		  } else if (spdM[2] < 0) {
-			digitalWrite(M3_B, 1);
+		  if(M3Enabled){
+			  if (spdM[2] > 0) {
+				digitalWrite(M3_A, 1);
+			  } else if (spdM[2] < 0) {
+				digitalWrite(M3_B, 1);
+			  }
 		  }
-		  if (spdM[3] > 0) {
-			digitalWrite(M4_A, 1);
-		  } else if (spdM[3] < 0) {
-			digitalWrite(M4_B, 1);
+		  if(M4Enabled){
+			  if (spdM[3] > 0) {
+				digitalWrite(M4_A, 1);
+			  } else if (spdM[3] < 0) {
+				digitalWrite(M4_B, 1);
+			  }
 		  }
 		}
 	}
@@ -212,6 +226,12 @@ void KittenBot::motorRun(int m1, int m2, int m3, int m4){
 }
 
 void KittenBot::motorRunByIndex(int idx, int spd){
+	if(idx==2){
+		M3Enabled = 1;
+	}
+	if(idx==3){
+		M4Enabled = 1;
+	}
 	spdM[idx] = spd;
 }
 
