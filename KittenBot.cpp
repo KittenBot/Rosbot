@@ -195,6 +195,33 @@ void KittenBot::stepMove(float l){
 	stpB.disableOutputs();
 }
 
+void KittenBot::stepMoveByIndex(int index, int pos, int speed){
+	if(index==0){
+		stpA.move(pos);
+		stpA.setSpeed(speed);
+		stpA.runToPosition();
+		stpA.disableOutputs();
+	}else{
+		stpB.move(pos);
+		stpB.setSpeed(speed);
+		stpB.runToPosition();
+		stpB.disableOutputs();
+	}
+	
+}
+
+void KittenBot::stepMoveMultiple(int pos1, int speed1, int pos2, int speed2){
+	long positions[2];
+	positions[0] = pos1;
+	positions[1] = pos2;
+	stpA.setSpeed(speed1);
+	stpB.setSpeed(speed2);
+    steppers.moveTo(positions);
+	steppers.runSpeedToPosition();
+	stpA.disableOutputs();
+	stpB.disableOutputs();
+}
+
 void KittenBot::stepTurn(float d){
 	long positions[2];
 	///180.0*3.141*KittenBot.BASE_WIDTH/2.0*KittenBot.PULSE_PER_METER
