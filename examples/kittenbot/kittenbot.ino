@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.01\r\n"
+#define FIRMWARE "Kittenbot V2.03\r\n"
 
 
 ServoTimer2 servo[11];
