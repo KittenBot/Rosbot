@@ -262,20 +262,20 @@ void KittenBot::motorRunByIndex(int idx, int spd){
 	spdM[idx] = spd;
 }
 
-float KittenBot::doPingSR04(int pin)
+int KittenBot::doPingSR04(int pin)
 {
-	float distance;
-	
-	unsigned int temp;
-
-	pinMode(pin,OUTPUT);
-	digitalWrite(pin,HIGH);
+	pinMode(pin, OUTPUT); 
+	digitalWrite(pin, LOW); // 使发出发出超声波信号接口低电平2μs
+	delayMicroseconds(2);
+	digitalWrite(pin, HIGH); // 使发出发出超声波信号接口高电平10μs，这里是至少10μs
 	delayMicroseconds(10);
+	digitalWrite(pin, LOW); // 保持发出超声波信号接口低电平
+	pinMode(pin, INPUT);
+	int distance = pulseIn(pin, HIGH); // 读出脉冲时间
+	distance= distance/58; // 将脉冲时间转化为距离（单位：厘米）
 	
-	pinMode(pin,INPUT);
-	temp=pulseIn(pin,HIGH);
-	
-	distance=(float)temp/58.2;
-
+	if(distance == 0){
+		distance = 999;
+	}
 	return distance;
 }

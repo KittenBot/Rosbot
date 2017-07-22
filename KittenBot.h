@@ -38,7 +38,7 @@ class KittenBot
 		void stepMoveMultiple(int pos1, int speed1, int pos2, int speed2);
 		void stepStop(void);
 		
-		float doPingSR04(int pin);
+		int doPingSR04(int pin);
 	
 
 	protected:
