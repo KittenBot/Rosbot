@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.03\r\n"
+#define FIRMWARE "Kittenbot V2.1\r\n"
 
 
 ServoTimer2 servo[11];
@@ -45,6 +45,8 @@ int16_t ax, ay, az;
 int16_t gx, gy, gz;
 bool stepMoving = false;
 bool LCD = false;
+float cos45 = cos(PI/4);
+
 // parse pin, 0~13 digital, 14.. analog pin
 void parsePinVal(char * cmd, int * pin) {
   if (cmd[0] == 'A') {
@@ -284,6 +286,50 @@ void doStop()
   kb.motorStop();
 }
 
+//--- M108 ---
+void doEnableMotor(char * cmd){
+  int m1, m2, m3, m4;
+  sscanf(cmd, "%d %d %d %d\n", &m1, &m2, &m3, &m4);
+  kb.enableMotor(m1, m2, m3, m4);
+}
+
+//--- M109 ---
+void doOmniWheel(char * cmd){
+  int spdM1, spdM2, spdM3, spdM4;
+  int vspeed = 0, hspeed = 0, rspeed=0;
+  sscanf(cmd, "%d %d %d\n", &vspeed, &hspeed, &rspeed);
+  int tspd;
+  // then map into 4 wheels
+  tspd = vspeed/cos45;
+  spdM1 = spdM4 = tspd;
+  spdM2 = spdM3 = -tspd;
+  tspd = hspeed/cos45;
+  spdM1+=tspd;
+  spdM2+=tspd;
+  spdM3-=tspd;
+  spdM4-=tspd;
+  // no mapping for rotate
+  spdM1+=rspeed;
+  spdM2+=rspeed;
+  spdM3+=rspeed;
+  spdM4+=rspeed;
+  // limit max and min value for each motor
+  spdM1 = constrain(spdM1,-255,255);
+  spdM2 = constrain(spdM2,-255,255);
+  spdM3 = constrain(spdM3,-255,255);
+  spdM4 = constrain(spdM4,-255,255);
+  /*
+  Serial.print("V=");Serial.print(vspeed);
+  Serial.print(" ,H=");Serial.print(hspeed);
+  Serial.print(" ,R=");Serial.print(rspeed);  
+  Serial.print(" ,M1=");  Serial.print(spdM1);
+  Serial.print(" ,M2=");  Serial.print(spdM2);
+  Serial.print(" ,M3=");  Serial.print(spdM3);
+  Serial.print(" ,M4=");  Serial.println(spdM4);
+  */
+  kb.motorRun(spdM1,spdM2,spdM3,spdM4);
+}
+
 //--- M200 ----
 void doDcSpeed(char *cmd)
 {
@@ -471,6 +517,12 @@ void parseMcode(char * cmd) {
     case 106: // disable stepper
       kb.stepStop();
       break;
+    case 108:
+      doEnableMotor(tmp);
+      break;
+    case 109: // omni wheel car movement
+      doOmniWheel(tmp);
+      break;
     case 200:
       doDcSpeed(tmp);
       break;
@@ -549,7 +601,7 @@ void syncRobotSetup()
 
 void setup() {
   Serial.begin(115200);
-
+  
   resetQueryList();
   echoVersion();
   tm1637.setBrightness(0x0f);

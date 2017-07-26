@@ -5,16 +5,18 @@
 
 #define M1 0
 #define M2 1
+#define M3 2
+#define M4 3
 
 class KittenBot
 {
 	private:
 		int spdM[4];
+		bool enableM[4];
 		bool stepMoving;
 		unsigned long timecount = 0;
 		int counter = 0;
 	public:
-		bool M3Enabled,M4Enabled;
 		float ppm;
 		float baseWidth;
 		KittenBot();
@@ -23,6 +25,7 @@ class KittenBot
 
 		void motorRun(int spd1, int spd2); // drive dual motor
 		void motorRun(int spd1, int spd2, int spd3, int spd4); // drive 4 motor
+		void enableMotor(int m1, int m2, int m3, int m4);
 		void motorRunByIndex(int idx, int spd);
 		void motorStop(void);
 		void runDCMotor(int idx, int spd);
