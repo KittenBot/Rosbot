@@ -22,7 +22,7 @@ class KittenBot
 		KittenBot();
 		void loop(); // Main loop for kittenbot lib
 		float getBatteryVoltage(); // Vin voltage from A7
-
+		
 		void motorRun(int spd1, int spd2); // drive dual motor
 		void motorRun(int spd1, int spd2, int spd3, int spd4); // drive 4 motor
 		void enableMotor(int m1, int m2, int m3, int m4);

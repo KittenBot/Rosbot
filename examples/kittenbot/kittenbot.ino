@@ -609,6 +609,9 @@ void setup() {
   lc.setIntensity(0, 8);
   lc.clearDisplay(0);
   initRobotSetup();
+  pinMode(7,OUTPUT);digitalWrite(7,0);
+  pinMode(8,OUTPUT);digitalWrite(8,0);
+  
   timer.every(100, doQueryWork);
 }
 
