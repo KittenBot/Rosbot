@@ -26,7 +26,6 @@ KittenBot::KittenBot()
 	steppers.addStepper(stpA);
 	steppers.addStepper(stpB);
 	rgbled.begin();
-	stepMoving = false;
 	enableM[0] = enableM[1] = 1;
 	enableM[2] = enableM[3] = 0;
 	ppm = 14124;
@@ -92,15 +91,6 @@ void KittenBot::runDCMotor(int idx, int spd){
 
 void KittenBot::loop()
 {
-	if (stpA.distanceToGo() != 0 || stpB.distanceToGo() != 0) {
-		stpA.runSpeedToPosition();
-		stpB.runSpeedToPosition();
-	} else {
-		if (stepMoving == true) {
-		  stepMoving = false;
-		  Serial.println("M100");
-		}
-	}
 	// update dc motor
 	if (micros() - timecount > 100) {
 		timecount = micros();
@@ -180,30 +170,29 @@ float KittenBot::getBatteryVoltage()
 
 
 void KittenBot::stepRun(int pos1, int pos2){
-	stepRun(pos1,600,pos2,600);
+	stepRun(pos1,500,pos2,500);
 }
 
 void KittenBot::stepRun(int pos1, int spd1, int pos2, int spd2){
-	stpA.move(pos1);
-	stpA.setSpeed(spd1);
-	stpB.move(pos2);
-	stpB.setSpeed(spd2);
-	if (spd1 == 0 && spd2 == 0) {
-		stepStop();
-	} else {
-		stepMoving = true;
-	}	
-	
-}
-
-void KittenBot::stepMove(float l){
-	long positions[2];
-	positions[0] = -l*ppm/100;
-	positions[1] = l*ppm/100;
-    steppers.moveTo(positions);
+	enableMotor(0,0,0,0);
+	stepPos[0] += pos1;
+	stepPos[1] += pos2;
+	stpA.setMaxSpeed(spd1);
+	stpB.setMaxSpeed(spd2);
+    steppers.moveTo(stepPos);
 	steppers.runSpeedToPosition();
 	stpA.disableOutputs();
 	stpB.disableOutputs();
+}
+
+void KittenBot::stepMove(float l){
+    stepRun(l*ppm/100,l*ppm/100);
+}
+
+void KittenBot::stepTurn(float d){
+	///180.0*3.141*KittenBot.BASE_WIDTH/2.0*KittenBot.PULSE_PER_METER
+	float dis = d/180*3.14*ppm*baseWidth/2.0; // todo: the direction perform different to online mode
+	stepRun(dis,-dis);
 }
 
 void KittenBot::stepMoveByIndex(int index, int pos, int speed){
@@ -222,25 +211,12 @@ void KittenBot::stepMoveByIndex(int index, int pos, int speed){
 }
 
 void KittenBot::stepMoveMultiple(int pos1, int speed1, int pos2, int speed2){
-	long positions[2];
-	positions[0] = pos1;
-	positions[1] = pos2;
+	stepPos[0] += pos1;
+	stepPos[1] += pos2;
 	stpA.setSpeed(speed1);
 	stpB.setSpeed(speed2);
-    steppers.moveTo(positions);
+    steppers.moveTo(stepPos);
 	steppers.runSpeedToPosition();
-	stpA.disableOutputs();
-	stpB.disableOutputs();
-}
-
-void KittenBot::stepTurn(float d){
-	long positions[2];
-	///180.0*3.141*KittenBot.BASE_WIDTH/2.0*KittenBot.PULSE_PER_METER
-	float dis = -d/180*3.14*ppm*baseWidth/2.0; // todo: the direction perform different to online mode
-	positions[0] = dis;
-	positions[1] = dis;
-    steppers.moveTo(positions);
-	steppers.runSpeedToPosition();	
 	stpA.disableOutputs();
 	stpB.disableOutputs();
 }
@@ -252,11 +228,13 @@ void KittenBot::stepStop(){
 
 
 void KittenBot::motorRun(int m1, int m2){
+	enableMotor(1,1,0,0);
 	spdM[0] = m1;
 	spdM[1] = m2;
 }
 
 void KittenBot::motorRun(int m1, int m2, int m3, int m4){
+	enableMotor(1,1,1,1);
 	spdM[0] = m1;
 	spdM[1] = m2;
 	spdM[2] = m3;

@@ -274,12 +274,14 @@ void doStepperSingle(char * cmd) {
   int posL, posR, spdL, spdR;
   parseLR(cmd, &posL, &posR, &spdL, &spdR);
   kb.stepRun(posL,spdL,posR,spdR);
+  Serial.println("M100");
 }
 
 void doStepperMove(char * cmd) {
   int stpL = 0, stpR = 0;
   parseLR(cmd, &stpL, &stpR);
   kb.stepRun(stpL, stpR);
+  Serial.println("M100");
 }
 void doStop()
 {
@@ -632,7 +634,7 @@ void loop() {
       bufindex = 0;
     }
   }
-
+  
   if (irrecv.enabled) {
     if (irrecv.decode(&results)) {
       if (results.value != 0xffffffff) {

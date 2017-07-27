@@ -13,9 +13,9 @@ class KittenBot
 	private:
 		int spdM[4];
 		bool enableM[4];
-		bool stepMoving;
 		unsigned long timecount = 0;
 		int counter = 0;
+		long stepPos[2];
 	public:
 		float ppm;
 		float baseWidth;
