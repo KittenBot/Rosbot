@@ -186,13 +186,13 @@ void KittenBot::stepRun(int pos1, int spd1, int pos2, int spd2){
 }
 
 void KittenBot::stepMove(float l){
-    stepRun(l*ppm/100,l*ppm/100);
+    stepRun(l*ppm/100,-l*ppm/100);
 }
 
 void KittenBot::stepTurn(float d){
 	///180.0*3.141*KittenBot.BASE_WIDTH/2.0*KittenBot.PULSE_PER_METER
 	float dis = d/180*3.14*ppm*baseWidth/2.0; // todo: the direction perform different to online mode
-	stepRun(dis,-dis);
+	stepRun(dis,dis);
 }
 
 void KittenBot::stepMoveByIndex(int index, int pos, int speed){
