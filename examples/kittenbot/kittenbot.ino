@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.1\r\n"
+#define FIRMWARE "Kittenbot V2.2\r\n"
 
 
 ServoTimer2 servo[11];
@@ -431,10 +431,15 @@ void doSoftReset() {
 }
 void doStepperArc(char *cmd)
 {
-  int stpL, stpR, spdR;
-  float temp;
-  sscanf(cmd, "%d %d\n", &spdR, &stpR);
-  
+  int width, angle;
+  long stpL, stpR;
+  sscanf(cmd, "%d %d\n", &width, &angle);
+  float precent = (float)angle / 360.0;
+  stpR = 2.0 * PI * ((float)width + 6.1);
+  stpR = stpR * 14124 / 100 * precent;
+  stpL = 2.0 * PI * ((float)width - 6.1);
+  stpL = stpL * 14124 / 100 * precent;
+  kb.stepMoveMultiple(stpR, 500, -stpL, 500);
 }
 
 void resetQueryList() {
