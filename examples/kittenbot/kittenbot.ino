@@ -249,6 +249,13 @@ void doServoArray(char * cmd){
   servo[idx].write(degree);
 }
 
+void doAppCmd(char * cmd){
+	int i;
+	parsePinVal(cmd, &i);
+	// todo: what todo with app command
+	
+}
+
 void doEchoVin() {
   float v;
   v = kb.getBatteryVoltage();
@@ -564,6 +571,8 @@ void parseMcode(char * cmd) {
     case 212: // servo array
       doServoArray(tmp);
       break;
+	case 213: // app command
+	  doAppCmd(tmp);
     case 999:
       doSoftReset();
       break;
