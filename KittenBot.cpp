@@ -2,6 +2,7 @@
 #include "AccelStepper.h"
 #include "MultiStepper.h"
 #include "Adafruit_NeoPixel.h"
+#include "Timer.h"
 
 #define M1_A 5
 #define M1_B 6
@@ -16,6 +17,15 @@ AccelStepper stpA(AccelStepper::FULL4WIRE, 5, 9, 6, 10);
 AccelStepper stpB(AccelStepper::FULL4WIRE, 7, 12, 8, 13);
 MultiStepper steppers;
 Adafruit_NeoPixel rgbled(16);
+Timer t4;
+float T[4];
+
+void timerCallback(){
+	T[0]+=0.1;
+	T[1]+=0.1;
+	T[2]+=0.1;
+	T[3]+=0.1;
+}
 
 KittenBot::KittenBot()
 {
@@ -30,10 +40,24 @@ KittenBot::KittenBot()
 	enableM[2] = enableM[3] = 0;
 	ppm = 14124;
 	baseWidth = 0.122;
+	T[0] = T[1] = T[2] = T[3] = 0;
 	for(int i=0;i<8;i++){
 		pinMode(MotorPin[i],OUTPUT);
 		digitalWrite(MotorPin[i],0);
 	}
+	t4.every(100, timerCallback);
+}
+
+void KittenBot::updateT(){
+	t4.update();
+}
+
+void KittenBot::resetTimer(int timerindex){
+	T[timerindex] = 0;
+}
+
+float KittenBot::getTimer(int timerindex){
+	return T[timerindex];
 }
 
 void KittenBot::enableMotor(int m1, int m2, int m3, int m4){
@@ -159,6 +183,7 @@ void KittenBot::loop()
 		  }
 		}
 	}
+	t4.update();
 }
 
 float KittenBot::getBatteryVoltage()

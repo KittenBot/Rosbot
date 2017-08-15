@@ -17,10 +17,13 @@ class KittenBot
 		int counter = 0;
 		long stepPos[2];
 	public:
+		float getTimer(int timerindex);
+		void resetTimer(int timerindex);
 		float ppm;
 		float baseWidth;
 		KittenBot();
-		void loop(); // Main loop for kittenbot lib
+		void loop(); // Main loop for motors
+		void updateT();
 		float getBatteryVoltage(); // Vin voltage from A7
 		
 		void motorRun(int spd1, int spd2); // drive dual motor
