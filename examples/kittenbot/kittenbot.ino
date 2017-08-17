@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.2\r\n"
+#define FIRMWARE "Kittenbot V2.3\r\n"
 
 
 ServoTimer2 servo[11];
@@ -344,6 +344,7 @@ void doGetTimer(char * cmd){
   parsePinVal(cmd,&index);
   float t = kb.getTimer(index);
   Serial.print("M111 ");
+  Serial.print(index);Serial.print(" ");
   Serial.println(t);
 }
 
