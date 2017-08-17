@@ -339,6 +339,20 @@ void doOmniWheel(char * cmd){
   kb.motorRun(spdM1,spdM2,spdM3,spdM4);
 }
 
+void doGetTimer(char * cmd){
+  int index = 0;
+  parsePinVal(cmd,&index);
+  float t = kb.getTimer(index);
+  Serial.print("M111 ");
+  Serial.println(t);
+}
+
+void doResetTimer(char * cmd){
+  int index = 0;
+  parsePinVal(cmd,&index);
+  kb.resetTimer(index);
+}
+
 //--- M200 ----
 void doDcSpeed(char *cmd)
 {
@@ -537,6 +551,12 @@ void parseMcode(char * cmd) {
     case 109: // omni wheel car movement
       doOmniWheel(tmp);
       break;
+    case 111: // get timer
+      doGetTimer(tmp);
+      break;
+    case 112: // reset timer
+      doResetTimer(tmp);
+      break;  
     case 200:
       doDcSpeed(tmp);
       break;
