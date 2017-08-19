@@ -1,7 +1,7 @@
 #ifndef KittenBot_h
 #define KittenBot_h
 
-#define INFINITY 65535
+#define INF_NUM 65535
 
 #define M1 0
 #define M2 1
