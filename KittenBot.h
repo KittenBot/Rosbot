@@ -45,7 +45,7 @@ class KittenBot
 		void stepStop(void);
 		
 		int doPingSR04(int pin);
-	
+		int doPingSR04(int trigPin, int echoPin);
 
 	protected:
 		unsigned char MotorPin[8] = { 5,6,9,10,7,8,12,13 };

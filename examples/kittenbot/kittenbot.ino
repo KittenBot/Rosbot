@@ -26,10 +26,12 @@ KittenBot kb;
 #define QUERY_DIGI 1
 #define QUERY_ANALOG 2
 #define QUERY_SONIC 3
+#define QUERY_SONIC_CLASSIC 4
 
 typedef struct {
   unsigned char type;
-  unsigned char pin;
+  unsigned char v0;
+  unsigned char v1;
 }DataQuery;
 
 DataQuery query[10];
@@ -165,22 +167,22 @@ void printPin(int pin) {
   }
 }
 
-void echoPinValue(char * code, int pin, int value) {
-  Serial.print(String(code) + " ");
-  printPin(pin);
-  Serial.println(" " + String(value));
+void echoPinValue(const char * code, int pin, int value) {
+  Serial.print(code);Serial.print(" ");
+  printPin(pin);Serial.print(" ");
+  Serial.println(value);
 }
 
-void echoPinValue(char * code, int pin, float value) {
-  Serial.print(String(code) + " ");
-  printPin(pin);
-  Serial.println(" " + String(value, 2));
+void echoPinValue(const char * code, int pin, float value) {
+  Serial.print(code);Serial.print(" ");
+  printPin(pin);Serial.print(" ");
+  Serial.println(value, 2);
 }
 
 
-void echoValue(char * code, float value) {
-  Serial.print(String(code));
-  Serial.println(" " + String(value, 2));
+void echoValue(const char * code, float value) {
+  Serial.print(code);Serial.print(" ");
+  Serial.println(value, 2);
 }
 
 void echoVersion() {
@@ -384,13 +386,16 @@ void doShoot() {
 
 void doPing(char * cmd) {
   float distance;
-  int trig, echo;
+  int trig, echo=-1;
   parsePinVal(cmd, &trig, &echo);
-  distance = kb.doPingSR04(trig);
+  if(echo>=0 && echo<A5){
+    distance = kb.doPingSR04(trig,echo);  
+  }else{
+    distance = kb.doPingSR04(trig);
+  }
   Serial.print("M202 ");
   Serial.println(distance);
 }
-
 
 void doLCDPrint(char * cmd) {
   int i = 0;
@@ -462,12 +467,16 @@ void resetQueryList() {
 }
 
 void doAttachQuery(char * cmd){
-  int pin,type;
-  parsePinVal(cmd, &pin, &type);
+  int type,v0,v1;
+  parsePinVal(cmd, &v0, &type, &v1);
+  
   for(int i=0;i<10;i++){
-    if(query[i].type==0 || query[i].pin==pin){
+    if(query[i].type==0 || query[i].v0==v0){
       query[i].type = type;
-      query[i].pin = pin;
+      query[i].v0 = v0;
+      if(type==QUERY_SONIC_CLASSIC){
+        query[i].v1 = v1;
+      }
       break;  
     }
   }
@@ -478,14 +487,23 @@ void doQueryWork() {
   for (i = 0; i < 10; i++) {
     if (query[i].type) {
       if(query[i].type==QUERY_DIGI){
-        int val = digitalRead(query[i].pin);
-        echoPinValue("M3", query[i].pin, val);
+        int val = digitalRead(query[i].v0);
+        echoPinValue("M3", query[i].v0, val);
       }else if(query[i].type==QUERY_ANALOG){
-        int val = analogRead(query[i].pin);
-        echoPinValue("M5", query[i].pin, val);
+        int val = analogRead(query[i].v0);
+        echoPinValue("M5", query[i].v0, val);
       }else if(query[i].type==QUERY_SONIC){
-        int val = kb.doPingSR04(query[i].pin);
-        echoPinValue("M202",query[i].pin, val);
+        int pin = query[i].v0;
+        int val = kb.doPingSR04(pin);
+        echoPinValue("M202",pin, val);
+        //echoValue("M202", val);
+      }else if(query[i].type==QUERY_SONIC_CLASSIC){
+        int trig = query[i].v0;
+        int echo = query[i].v1;
+        int val = kb.doPingSR04(trig, echo);
+        echoPinValue("M202",trig, val);
+        //Serial.print("M202 ");Serial.print(trig);Serial.print(" ");Serial.println(val);
+        //echoValue("M202", val);
       }
     }
   }
@@ -599,9 +617,9 @@ void parseMcode(char * cmd) {
       break;
 	case 213: // app command
 	  doAppCmd(tmp);
-    case 999:
-      doSoftReset();
-      break;
+  case 999:
+    doSoftReset();
+    break;
   }
 
 }
