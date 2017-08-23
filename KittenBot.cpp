@@ -70,6 +70,7 @@ void KittenBot::enableMotor(int m1, int m2, int m3, int m4){
 void KittenBot::motorStop()
 {
 	for(int i=0;i<4;i++) spdM[i] = 0;
+	stopAll();
 }
 
 void KittenBot::stopAll()
