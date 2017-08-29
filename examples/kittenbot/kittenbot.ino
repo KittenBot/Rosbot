@@ -205,10 +205,18 @@ void doDigitalWrite(char * cmd) {
 void doDigitalRead(char * cmd) {
   int pin, val;
   parsePinVal(cmd, &pin);
-
+  pinMode(pin, INPUT);
   val = digitalRead(pin);
   echoPinValue("M3", pin, val);
 
+}
+
+void doButton(char * cmd){
+  int pin, val;
+  parsePinVal(cmd, &pin);
+  pinMode(pin, INPUT);
+  val = !digitalRead(pin);
+  echoPinValue("M10", pin, val);
 }
 
 void doAnalogWrite(char * cmd) {
@@ -547,6 +555,9 @@ void parseMcode(char * cmd) {
       break;
     case 9: // rgb led
       doRgb(tmp);
+      break;
+    case 10: // button
+      doButton(tmp);
       break;
     case 13: // query
       doAttachQuery(tmp);
