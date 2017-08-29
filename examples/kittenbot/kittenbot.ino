@@ -9,7 +9,7 @@
 #include "KittenBot.h"
 #include "Timer.h"
 
-#define FIRMWARE "Kittenbot V2.3\r\n"
+#define FIRMWARE "Kittenbot V2.4\r\n"
 
 
 ServoTimer2 servo[11];
@@ -476,6 +476,8 @@ void doAttachQuery(char * cmd){
       query[i].v0 = v0;
       if(type==QUERY_SONIC_CLASSIC){
         query[i].v1 = v1;
+      }else if(type==QUERY_DIGI){
+        pinMode(v0, INPUT);  
       }
       break;  
     }
