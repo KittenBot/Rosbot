@@ -30,6 +30,7 @@ class KittenBot
 		void motorRun(int spd1, int spd2, int spd3, int spd4); // drive 4 motor
 		void enableMotor(int m1, int m2, int m3, int m4);
 		void motorRunByIndex(int idx, int spd);
+		void carMove(int forward, int turn);
 		void motorStop(void);
 		void runDCMotor(int idx, int spd);
 		void stopAll(void);

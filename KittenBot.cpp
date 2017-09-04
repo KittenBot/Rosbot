@@ -274,6 +274,14 @@ void KittenBot::motorRunByIndex(int idx, int spd){
 	spdM[idx] = spd;
 }
 
+void KittenBot::carMove(int forward, int turn){
+	int lmotor,rmotor;
+	lmotor = (forward+turn);
+	rmotor = (forward-turn);
+	runDCMotor(0, lmotor);
+	runDCMotor(1, rmotor);	
+}
+
 int KittenBot::doPingSR04(int pin)
 {
 	return doPingSR04(pin,pin);
