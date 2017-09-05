@@ -40,7 +40,7 @@ class KittenBot
 		void stepRun(int pos1, int spd1, int pos2, int spd2);
 		void stepMove(float length);
 		void stepTurn(float degree);
-		void stepArc(float diameter, float degree);
+		void stepArc(float R, float degree);
 		void stepMoveByIndex(int index, int pos, int speed);
 		void stepMoveMultiple(int pos1, int speed1, int pos2, int speed2);
 		void stepStop(void);

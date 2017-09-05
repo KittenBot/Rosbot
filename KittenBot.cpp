@@ -221,6 +221,49 @@ void KittenBot::stepTurn(float d){
 	stepRun(dis,dis);
 }
 
+#define SPD_MAX 500.0f
+void KittenBot::stepArc(float R, float degree){
+	float L = 0.120; // width of robot
+	float V = 0.02; // linear speed cm/s
+	float VL,VR; // linear speed
+	float DL,DR; // distance
+	float W; // angular speed
+	float t; // time
+	W = V/R;
+	float spdRatio;
+	float theta = degree/180*PI; // change to rad
+	VL = W*(1-L/2/R)*ppm; // change from m/s to pulse/s
+	VR = W*(1+L/2/R)*ppm;
+	//t = theta*R/V;
+	DL = theta*(R-L/2)*ppm; // change from m to pulse
+	DR = -theta*(R+L/2)*ppm;
+	//Serial.print("#0 VL=");Serial.print(VL);
+	//Serial.print(" ,VR=");Serial.print(VR);
+	if(abs(VL)>abs(VR) && abs(VL)>SPD_MAX){
+		spdRatio = SPD_MAX/VL;
+		VL*=spdRatio;
+		VR*=spdRatio;
+	}else if(abs(VR)>SPD_MAX){
+		spdRatio = SPD_MAX/VR;
+		VL*=spdRatio;
+		VR*=spdRatio;
+	}
+	//Serial.print(" ,VL=");Serial.print(VL);
+	//Serial.print(" ,VR=");Serial.print(VR);
+	//Serial.print(" ,DL=");Serial.print(DL);
+	//Serial.print(" ,DR=");Serial.println(DR);
+
+	stpA.move(DL);
+	stpA.setSpeed(VL);
+	stpB.move(DR);
+	stpB.setSpeed(VR);
+
+	while(stpA.distanceToGo()!=0 || stpB.distanceToGo()!=0){
+		stpA.runSpeedToPosition();
+		stpB.runSpeedToPosition();
+	}
+}
+
 void KittenBot::stepMoveByIndex(int index, int pos, int speed){
 	if(index==0){
 		stpA.move(pos);
