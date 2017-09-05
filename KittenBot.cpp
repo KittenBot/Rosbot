@@ -3,6 +3,10 @@
 #include "MultiStepper.h"
 #include "Adafruit_NeoPixel.h"
 #include "Timer.h"
+#include "DallasTemperature.h"   //DS18B20 库
+#include "dht11.h"               //DHT11   库
+#include "OneWire.h"
+
 
 #define M1_A 5
 #define M1_B 6
@@ -317,14 +321,6 @@ void KittenBot::motorRunByIndex(int idx, int spd){
 	spdM[idx] = spd;
 }
 
-void KittenBot::carMove(int forward, int turn){
-	int lmotor,rmotor;
-	lmotor = (forward+turn);
-	rmotor = (forward-turn);
-	runDCMotor(0, lmotor);
-	runDCMotor(1, rmotor);	
-}
-
 int KittenBot::doPingSR04(int pin)
 {
 	return doPingSR04(pin,pin);
@@ -348,5 +344,62 @@ int KittenBot::doPingSR04(int trigPin, int echoPin)
 	return distance;
 }
 
+/****************************   Get DS18B20 Temp   **************************************/
+float KittenBot::getDS18B20Temp(int pin){
+
+	OneWire oneWire(pin);//定义DS18B20数据口连接  获取鱼骨头标号对应pin2（模拟口引脚）
+	DallasTemperature sensors(&oneWire);
+
+	sensors.begin();
+
+	//Serial.print("Requesting temperatures...");
+	sensors.requestTemperatures(); // 发送命令获取温度
+	//Serial.println("DONE");
+   
+	//Serial.print("Temperature for the device 1 (index 0) is: ");
+	//Serial.println(sensors.getTempCByIndex(0));  
+	return  sensors.getTempCByIndex(0);
+}
 
 
+
+
+float KittenBot::getDHT11TempHum(double TempHum[2], int pin){
+  dht11 DHT11;
+// Serial.println("\n");
+
+  int chk = DHT11.read(pin);
+//  double Temperature_Humidity[2]
+// Serial.print("Read sensor: ");
+   switch (chk)
+  {
+    case DHTLIB_OK: 
+                Serial.println("OK"); 
+                break;
+    case DHTLIB_ERROR_CHECKSUM: 
+                Serial.println("Checksum error"); 
+                break;
+    case DHTLIB_ERROR_TIMEOUT: 
+                Serial.println("Time out error"); 
+                break;
+    default: 
+                Serial.println("Unknown error"); 
+                break;
+  }
+  TempHum[0] = (float)DHT11.humidity;
+  TempHum[1] = (float)DHT11.temperature;
+   
+ //return (float)DHT11.temperature;
+
+}
+/****************************    Get DHT11 humidity    ********************************
+float FishPort::getDHT11_Humidity(){
+  dht11 DHT11;
+
+  int chi = DHT11.read(getPin2());
+
+  return (float)DHT11.humidity;
+  
+
+}
+*/

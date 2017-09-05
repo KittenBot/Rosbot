@@ -30,7 +30,6 @@ class KittenBot
 		void motorRun(int spd1, int spd2, int spd3, int spd4); // drive 4 motor
 		void enableMotor(int m1, int m2, int m3, int m4);
 		void motorRunByIndex(int idx, int spd);
-		void carMove(int forward, int turn);
 		void motorStop(void);
 		void runDCMotor(int idx, int spd);
 		void stopAll(void);
@@ -47,6 +46,10 @@ class KittenBot
 		
 		int doPingSR04(int pin);
 		int doPingSR04(int trigPin, int echoPin);
+
+        float getDS18B20Temp(int pin);   //获取DS18B20温度
+		float getDHT11TempHum(double TempHum[2], int pin);     //获取DHT11  温度 湿度
+//	    float getDHT11Hum();       //获取DHT11  湿度
 
 	protected:
 		unsigned char MotorPin[8] = { 5,6,9,10,7,8,12,13 };

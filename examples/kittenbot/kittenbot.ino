@@ -10,6 +10,7 @@
 #include "Timer.h"
 
 #define FIRMWARE "Kittenbot V2.6\r\n"
+#define FIRMWARE "Kittenbot V2.5\r\n"
 
 
 ServoTimer2 servo[11];
@@ -260,10 +261,10 @@ void doServoArray(char * cmd){
 }
 
 void doAppCmd(char * cmd){
-	int i;
-	parsePinVal(cmd, &i);
-	// todo: what todo with app command
-	
+  int i;
+  parsePinVal(cmd, &i);
+  // todo: what todo with app command
+  
 }
 
 void doEchoVin() {
@@ -404,7 +405,22 @@ void doPing(char * cmd) {
   Serial.print("M202 ");
   Serial.println(distance);
 }
-
+void doReadDS18B20(char * cmd){
+  float temp;
+  int pin;
+  parsePinVal(cmd, &pin);
+  temp = kb.getDS18B20Temp(pin);
+  Serial.println(temp);
+}
+void doReadDHT11(char * cmd){
+  int pin;
+  parsePinVal(cmd, &pin);
+  
+  double *TempHum = new double[2];
+  kb.getDHT11TempHum(TempHum,pin);
+  for(int i = 0;i < 2;i++)Serial.println(TempHum[i]);
+  delete[] TempHum;
+}
 void doLCDPrint(char * cmd) {
   int i = 0;
   if (LCD == false)
@@ -623,10 +639,16 @@ void parseMcode(char * cmd) {
     case 212: // servo array
       doServoArray(tmp);
       break;
-	case 213: // app command
-	  doAppCmd(tmp);
-  case 999:
-    doSoftReset();
+    case 213: // app command
+      doAppCmd(tmp);
+    case 214:
+      doReadDS18B20(tmp);
+      break; 
+    case 215:
+      doReadDHT11(tmp);
+      break;      
+    case 999:
+      doSoftReset();
     break;
   }
 
