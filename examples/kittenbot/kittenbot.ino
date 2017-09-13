@@ -10,8 +10,6 @@
 #include "Timer.h"
 
 #define FIRMWARE "Kittenbot V2.6\r\n"
-#define FIRMWARE "Kittenbot V2.5\r\n"
-
 
 ServoTimer2 servo[11];
 unsigned char servoPinMap[10]  ={4,7,8,11,12,13,A0,A1,A2,A3};
@@ -476,7 +474,7 @@ void doSoftReset() {
 void doStepperArc(char *cmd)
 {
   int diameter, angle;
-  sscanf(cmd, "%d %d\n", &width, &angle);
+  sscanf(cmd, "%d %d\n", &diameter, &angle);
   float r = ((float)diameter)/100; // cm -> m
   kb.stepArc(r,angle);
 }
